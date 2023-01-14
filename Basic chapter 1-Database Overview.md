@@ -115,7 +115,7 @@ IBM公司出品，取自Information 和Unix的结合，它是**第一个被移�
 
 ### 概述
 
-MySQL是一个**开放源代码的关系型数据库管理系统**，由瑞典MySQL AB（创始人Michael Widenius）公司1995年开发。2008被Sun 收购，2009年Sun被Oracle 收购。MySQL 的创造者担心 MySQL 有闭源的风险，创建了 MySQL 的分支项目 MariaDB。
+MySQL是一个**开放源代码的关系型数据库管理系统**，由瑞典MySQL AB（创始人Michael Widenius）公司1995年开发。2008被Sun 收购，2009年Sun被Oracle 收购。MySQL 的创造者担心 MySQL 有闭源的风险，创建MySQL 的分支项目 MariaDB。
 
 MySQL采用了`GPL（GNU General Public License）` 协议。
 
@@ -144,6 +144,7 @@ MySQL从5.7版本直接跳跃发布了8.0版本，在功能上做了显著的改
 #### 优势
 
 **复杂查询**：可以用SQL语句方便的在一个表以及多个表之间做非常复杂的数据查询。
+
 **事务支持**：使得对于安全性能很高的数据访问要求得以实现。
 
 ### 非关系型数据库(非RDBMS)
@@ -204,8 +205,7 @@ ORM思想 (Object Relational Mapping)体现
 
 ### 表的关联关系
 
-表与表之间的数据记录有关系(relationship)。现实世界中的各种实体以及实体之间的各种联系均用
-关系模型来表示。
+表与表之间的数据记录有关系(relationship)。现实世界中的各种实体以及实体之间的各种联系均用关系模型来表示。
 
 四种：一对一关联、一对多关联、多对多关联、自我引用
 
@@ -226,8 +226,7 @@ ORM思想 (Object Relational Mapping)体现
 
 #### 多对多（many-to-many）
 
-要表示多对多关系，必须创建第三个表，该表通常称为`联接表`，它将多对多关系划分为两个一对多关
-系。将这两个表的主键都插入到第三个表中。
+要表示多对多关系，必须创建第三个表，该表通常称为`联接表`，它将多对多关系划分为两个一对多关系。将这两个表的主键都插入到第三个表中。
 
 ![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230114155916878.png)
 

@@ -35,4 +35,8 @@ Coming Soon...
 
 
 
-Tips：如果遇到图片无法加载的情况，可以考虑使用代理，或者访问[博客网站](https://blog.csdn.net/m0_52316372/category_12173728.html) 。
+## Tips
+
+1. 如果您在阅读的过程中存在疑问或发现错误，欢迎提Issues交流订正。
+
+2. 如果遇到图片无法加载的情况，可以考虑使用代理，或者访问[博客网站](https://blog.csdn.net/m0_52316372/category_12173728.html) 。
