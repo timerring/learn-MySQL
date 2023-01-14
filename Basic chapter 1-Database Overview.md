@@ -1,4 +1,4 @@
-- [Basic chapter 1-数据库概述](#basic-chapter-1-数据库概述)
+- [Basic chapter 1 - 数据库概述](#basic-chapter-1---数据库概述)
   - [数据库](#数据库)
   - [数据库与数据库管理系统](#数据库与数据库管理系统)
     - [数据库的相关概念](#数据库的相关概念)
@@ -33,9 +33,10 @@
       - [一对多关系（one-to-many）](#一对多关系one-to-many)
       - [多对多（many-to-many）](#多对多many-to-many)
       - [自我引用(Self reference)](#自我引用self-reference)
+  - [面试题](#面试题)
 
 
-# Basic chapter 1-数据库概述
+# Basic chapter 1 - 数据库概述
 
 ## 数据库
 
@@ -233,3 +234,44 @@ ORM思想 (Object Relational Mapping)体现
 #### 自我引用(Self reference)
 
 ![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230114160132538.png)
+
+## 面试题
+
+1.谈谈了解的常见的数据库
+
+答：Oracle、MySQl、SQL Server、DB2、PGSQL；Redis、MongoDB、ES等等
+
+2.谈谈你对MySQL历史、特点的理解
+
+答：
+
++ 历史：
+  + 由瑞典的MySQL AB 公司创立，1995开发出的MySQL
+  + 2008年，MySQL被SUN公司收购
+  + 2009年，Oracle收购SUN公司，进而Oracle就获取了MySQL
+  + 2016年，MySQL8.0.0版本推出
++ 特点：
+  + 开源的、关系型的数据库
+  + 支持千万级别数据量的存储，大型的数据库
+
+3.说说你对DB、DBMS、SQL的理解
+
+答：
+
++ DB：database，看做是数据库文件。
++ DBMS：数据库管理系统。
+
+**MySQL数据库服务器中安装了MySQL DBMS, 使用MySQL DBMS 来管理和操作DB，使用的是SQL语言。**
+
+4.你知道哪些非关系型数据库？
+
++ 键值型数据库：Redis
++ 文档型数据库：MongoDB
++ 搜索引擎数据库：ES、Solr
++ 列式数据库：HBase
++ 图形数据库：InfoGrid
+
+5.表与表的记录之间存在哪些关联关系？
+
++ ORM思想：Object-Relational Mapping，它的作用是在关系型数据库和对象之间作一个映射，这样，我们在具体的操作数据库的时候，就不需要再去和复杂的SQL语句打交道，只要像平时操作对象一样操作它就可以了。表，数据，字段。
++ 表与表的记录之间的关系：一对一关系、一对多关系、多对多关系、自关联。
