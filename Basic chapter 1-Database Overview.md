@@ -275,3 +275,7 @@ ORM思想 (Object Relational Mapping)体现
 
 + ORM思想：Object-Relational Mapping，它的作用是在关系型数据库和对象之间作一个映射，这样，我们在具体的操作数据库的时候，就不需要再去和复杂的SQL语句打交道，只要像平时操作对象一样操作它就可以了。表，数据，字段。
 + 表与表的记录之间的关系：一对一关系、一对多关系、多对多关系、自关联。
+
+
+
+[返回首页](https://github.com/timerring/learn-MySQL)
