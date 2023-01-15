@@ -7,7 +7,7 @@ MySQL的深层学习和笔记，包括原理分析、实用代码、面试题和
 
 [Basic chapter 1 - 数据库概述](https://github.com/timerring/learn-MySQL/blob/main/Basic%20chapter%201-Database%20Overview.md)
 
-
+[Basic chapter 2 - MySQL环境搭建](https://github.com/timerring/learn-MySQL/blob/main/Basic%20chapter%202-MySQL%20Environment%20Setup.md)
 
 
 
@@ -37,6 +37,6 @@ Coming Soon...
 
 ## Tips
 
-1. 如果您在阅读的过程中存在疑问或发现错误，欢迎提Issues交流订正。
-
+1. 本仓库针对内容进行了一定程度上的精简，去除了冗余。同时对一些相关的知识进行了适当的补充。
+2. 如果您在阅读的过程中存在疑问或发现错误，欢迎提Issues交流订正。
 2. 如果遇到图片无法加载的情况，可以考虑使用代理，或者访问[博客网站](https://blog.csdn.net/m0_52316372/category_12173728.html) 。
