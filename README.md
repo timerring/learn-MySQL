@@ -13,6 +13,8 @@ MySQL的深层学习和笔记，包括原理分析、实用代码、面试题和
 
 [Basic chapter 4 - 运算符](https://github.com/timerring/learn-MySQL/blob/main/Basic%20chapter%204%20-%20Operators.md)
 
+[Basic chapter 5 - 排序与分页](https://github.com/timerring/learn-MySQL/blob/main/Basic%20chapter%205%20-%20Sorting%20and%20Paging.md)
+
 ## MySQL 数据库高级篇
 
 Coming Soon...
