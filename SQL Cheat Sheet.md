@@ -109,13 +109,88 @@
 | LIMIT 3 OFFSET 4                         | MySQL 8.0新增，从第5条记录开始后面的3条记录，同`LIMIT 4,3;`  |
 | LIMIT (PageNo - 1) * PageSize, PageSize; | 每页参数计算公式，每页的是从第`（当前页数-1）* 每页条数` 条起 |
 
+## 多表查询
 
+| 指令                                                         | 作用                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| SELECT e.last_name,e.salary,j.grade_level<br/>FROM employees e,job_grades j<br/>WHERE e.salary between j.lowest_sal and j.highest_sal; | 等值连接与非等值连接                                         |
+| SELECT CONCAT(worker.last_name ,' works for ', manager.last_name)<br/>FROM employees worker, employees manager<br/>WHERE worker.manager_id = manager.employee_id ; | 自连接与非自连接，构造两张表进行匹配                         |
+| # 左外连接<br/>SELECT last_name,department_name<br/>FROM employees ,departments<br/>WHERE employees.department_id = departments.department_id(+); | SQL92内连接与外连接，(+) 表示哪个是从表                      |
+| SELECT e.last_name, e.department_id, d.department_name<br/>FROM employees e LEFT OUTER JOIN departments d<br/>ON (e.department_id = d.department_id) ; | SQL99内连接与外连接                                          |
+| SELECT column,... FROM table1<br/>UNION [ALL]<br/>SELECT column,... FROM table2 | 合并查询结果。UNION 操作符返回两个查询的结果集的并集，去除重复记录。UNION ALL不去重。 |
+| SELECT employee_id,last_name,department_name<br/>FROM employees e NATURAL JOIN departments d; | 自然连接，自动查询两张连接表中所有相同的字段，然后进行等值连接。 |
+| SELECT employee_id,last_name,department_name<br/>FROM employees e JOIN departments d<br/>USING (department_id); | USING连接。指定数据表里的同名字段进行等值连接。但是只能配合JOIN一起使用。 |
 
+### 7种SQL JOINS的实现
 
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230119163005000.png)
 
+中图：内连接 A ∩ B
 
+```sql
+SELECT employee_id,last_name,department_name
+FROM employees e JOIN departments d
+ON e.`department_id` = d.`department_id`;
+```
 
+左上图：左外连接
 
+```sql
+SELECT employee_id,last_name,department_name
+FROM employees e LEFT JOIN departments d
+ON e.`department_id` = d.`department_id`;
+```
+
+右上图：右外连接
+
+```sql
+SELECT employee_id,last_name,department_name
+FROM employees e RIGHT JOIN departments d
+ON e.`department_id` = d.`department_id`;
+```
+
+左中图：A - A ∩ B
+
+```sql
+SELECT employee_id,last_name,department_name
+FROM employees e LEFT JOIN departments d
+ON e.`department_id` = d.`department_id`
+WHERE d.`department_id` IS NULL
+```
+
+右中图：B - A ∩ B
+
+**这里解释一下`WHERE e.department_id IS NULL`，首先是由右外连接衍生出来的，减去中间交集的部分，然后交际的部分是包含A和B的，只需要用条件将 `从表` A置为NULL，即可将在B中有A的部分筛掉。**
+
+```sql
+SELECT employee_id,last_name,department_name
+FROM employees e RIGHT JOIN departments d
+ON e.`department_id` = d.`department_id`
+WHERE e.`department_id` IS NULL
+```
+
+左下图：满外连接，左中图 + 右上图  A∪B
+
+```sql
+SELECT employee_id,last_name,department_name FROM employees e LEFT JOIN departments d
+ON e.`department_id` = d.`department_id` WHERE d.`department_id` IS NULL
+UNION ALL  #没有去重操作，效率高
+SELECT employee_id,last_name,department_name FROM employees e RIGHT JOIN departments d ON e.`department_id` = d.`department_id`;
+```
+
+右下图：左中图 + 右中图 A ∪ B - A ∩ B 或者 ( A - A ∩ B) ∪ ( B - A ∩ B）
+
+```sql
+SELECT employee_id,last_name,department_name
+FROM employees e LEFT JOIN departments d
+ON e.`department_id` = d.`department_id`
+WHERE d.`department_id` IS NULL
+UNION ALL
+SELECT employee_id,last_name,department_name
+FROM employees e RIGHT JOIN departments d
+ON e.`department_id` = d.`department_id`
+WHERE e.`department_id` IS NULL
+```
 
 
 
