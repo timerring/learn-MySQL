@@ -17,7 +17,7 @@ MySQL的深层学习和笔记，包括原理分析、实用代码、面试题和
 
 [Basic chapter 6 - 多表查询](https://github.com/timerring/learn-MySQL/blob/main/Basic%20chapter%206%20-%20Multi-table%20Query.md)
 
-
+[Basic chapter 7 - 单行函数](https://github.com/timerring/learn-MySQL/blob/main/Basic%20chapter%207%20-%20One-line%20Functions.md)
 
 
 

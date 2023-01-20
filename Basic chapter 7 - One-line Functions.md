@@ -1,200 +1,73 @@
-# SQL速查表
+- [Basic chapter 7 - 单行函数](#basic-chapter-7---单行函数)
+	- [1. 函数的理解](#1-函数的理解)
+		- [函数概念](#函数概念)
+		- [不同DBMS函数的差异](#不同dbms函数的差异)
+		- [MySQL的内置函数及分类](#mysql的内置函数及分类)
+			- [两种SQL函数](#两种sql函数)
+	- [2. 数值函数](#2-数值函数)
+		- [基本函数](#基本函数)
+		- [角度与弧度互换函数](#角度与弧度互换函数)
+		- [三角函数](#三角函数)
+		- [指数与对数](#指数与对数)
+		- [进制间的转换](#进制间的转换)
+	- [3. 字符串函数](#3-字符串函数)
+	- [4. 日期和时间函数](#4-日期和时间函数)
+		- [获取日期、时间](#获取日期时间)
+		- [日期与时间戳的转换](#日期与时间戳的转换)
+		- [获取月份、星期、星期数、天数等函数](#获取月份星期星期数天数等函数)
+		- [日期的操作函数](#日期的操作函数)
+		- [时间和秒钟转换的函数](#时间和秒钟转换的函数)
+		- [计算日期和时间的函数](#计算日期和时间的函数)
+		- [日期的格式化与解析](#日期的格式化与解析)
+	- [5. 流程控制函数](#5-流程控制函数)
+	- [6. 加密与解密函数](#6-加密与解密函数)
+	- [7. MySQL信息函数](#7-mysql信息函数)
+	- [8. 其他函数](#8-其他函数)
+	- [练习题](#练习题)
 
-## 注释
 
-| 语法           | 作用     |
-| -------------- | -------- |
-| # 注释文字     | 单行注释 |
-| -- 注释文字    | 单行注释 |
-| /* 注释文字 */ | 多行注释 |
+# Basic chapter 7 - 单行函数
 
-## SELECT语句
+## 1. 函数的理解
 
-| 语法                                                         | 作用                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| SELECT 1+1, 2+2 FROM DUAL;                                   | 伪表查询                                                     |
-| SELECT department_id, location_id<br/>FROM departments;      | 普通字段查询                                                 |
-| SELECT last_name "Name", salary*12 "Annual Salary"<br/>FROM employees; | 列的别名。(列和别名之间加`AS`也行)。                         |
-| SELECT DISTINCT department_id<br/>FROM employees;            | 关键字DISTINCT去除重复行                                     |
-| SELECT * FROM \`ORDER\`;                                     | 和保留字、数据库系统或常用方法冲突。语句中使用一对``引起来。 |
-| SELECT 'timering' as corporation, last_name<br/>FROM employees; | 在 SELECT 查询结果中增加一列固定的常数列                     |
-| SELECT employee_id, last_name, job_id, department_id<br/>FROM employees<br/>WHERE department_id = 90 ; | 过滤数据                                                     |
+### 函数概念
 
-### 运算符
+函数在计算机语言的使用中贯穿始终，函数的作用是什么呢？它可以把我们经常使用的代码封装起来，需要的时候直接调用即可。这样既提高了代码效率，又提高了可维护性。在 SQL 中我们也可以使用函数对检索出来的数据进行函数操作。使用这些函数，可以极大地提高用户对数据库的管理效率。
 
-| 算术语法                                                     | 作用                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| SELECT A＋B                                                  | + 遇到非数值类型，先尝试转成数值，如果转失败，就按0计算      |
-| SELECT A - B                                                 | -                                                            |
-| SELECT A * B                                                 | *                                                            |
-| SELECT A DIV B<br>SELECT A / B                               | / 一个数除整数，必得浮点（保留4位），除以0为NULL             |
-| SELECT A % B<br/>SELECT A MOD B                              | 求模（取余）                                                 |
-| **比较语法**                                                 | **作用**                                                     |
-| SELECT C FROM TABLE WHERE A = B                              | = 判断等号两边的值、字符串或表达式是否相等。<br/>一个是整数，MySQL会将字符串转化为数字进行比较。如果字符串不能隐式地转为数字，则会等价数字0。<br/>有一个为NULL，结果为NULL。 |
-| SELECT C FROM TABLE WHEREA <=> B                             | <=> 安全等于运算符：两个操作数均为NULL时，其返回值为1。<br/>当一个操作数为NULL时，其返回值为0。 |
-| SELECT C FROM TABLE WHEREA <> B<br>SELECT C FROM TABLE WHEREA != B | <>OR!= 有任意一个为NULL，结果为NULL。                        |
-| SELECT C FROM TABLE WHERE A < B                              | <                                                            |
-| SELECT C FROM TABLE WHERE A <= B                             | <=                                                           |
-| SELECT C FROM TABLE WHERE A > B                              | >                                                            |
-| SELECT C FROM TABLE WHERE A >= B                             | >=                                                           |
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120104350886.png)
 
-### 非符号类型的运算符
+在 SQL 语言中，包括了`内置函数`和`自定义函数`。
 
-| 语法                                                         | 作用                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| SELECT B FROMTABLE WHERE A IS NULL<br>SELECT B FROM TABLE WHERE A ISNULL | IS NULL 判断是否为空                                         |
-| SELECT B FROM TABLE WHERE A IS NOT NULL                      | IS NOT NULL 判断是否非空                                     |
-| SELECT D FROM TABLE WHERE C LEAST(A,B)                       | LEAST 返回多值中最小值，字符串时返回字母表中顺序最靠前的字符，有NULL返回NULL |
-| SELECT D FROM TABLE WHERE C GREATEST(A,B)                    | GREATEST 返回多值中最大值，字符串时返回字母表中顺序最靠后的字符，有NULL返回NULL |
-| SELECT D FROM TABLE WHERE C BETWEEN A AND B                  | 是否在两值之间（闭区间）                                     |
-| SELECT D FROMTABLE WHERE C IN (A,B)                          | 是否为列表中任意一个值，有NULL返回NULL                       |
-| SELECT D FROM TABLE WHERE C NOT IN (A,B)                     | 是否不为列表中任意一个值                                     |
-| SELECT C FROMTABLE WHERE A LIKE '_a%k%'                      | 模糊匹配。“%”：匹配0个或多个字符。<br/>“_”：只能匹配一个字符。`\`表示转义或者`ESCAPE`转义 |
-| SELECT C FROM TABLE WHERE A REGEXP 'e$'                      | 正则匹配                                                     |
-| SELECT C FROM TABLE WHERE A RLIKE B                          | 正则匹配                                                     |
++ 内置函数是系统内置的通用函数
++ 自定义函数是我们根据自己的需要编写的
 
-### 逻辑运算符
+### 不同DBMS函数的差异
 
-| 语法                             | 作用                                              |
-| -------------------------------- | ------------------------------------------------- |
-| SELECT NOT A                     | NOT  !                                            |
-| SELECT A AND B<br>SELECT A && B  | AND  && 有0返回0，然后再有NULL返回NULL。此外返回1 |
-| SELECT A OR B<br/>SELECT A \|\|B | OR 或 优先级1最高，然后是NULL，最后是0            |
-| SELECT A XOR B                   | XOR 异或 有NULL返回NULL其他正常                   |
+使用 SQL 语言的时候，不是直接和这门语言打交道，而是通过它使用不同的数据库软件，即DBMS。DBMS 之间的差异性很大，只有很少的函数是被 DBMS 同时支持的。比如，大多数 DBMS 使用（||）或者（+）来做拼接符，而在 MySQL 中的字符串拼接函数为concat()。大部分 DBMS 会有自己特定的函数，这就意味着采用 SQL 函数的代码可移植性是很
+差的。
 
-### 位运算符
+### MySQL的内置函数及分类
 
-位运算符会先将操作数变成二进制数，然后进行位运算，最后将计算结果从二进制变回十进制数。
+MySQL提供的内置函数 `从实现的功能角度` 可以分为`数值函数`、`字符串函数`、`日期和时间函数`、`流程控制函数`、`加密与解密函数`、`获取MySQL信息函数`、`聚合函数`等。
 
-| 指令          | 作用     |
-| ------------- | -------- |
-| SELECTA & B   | 按位与   |
-| SELECTA \| B  | 按位或   |
-| SELECT A ^ B  | 按位异或 |
-| SELECT ~ A    | 按位取反 |
-| SELECT A >> 2 | 按位右移 |
-| SELECT B <<2  | 按位左移 |
+将这些丰富的内置函数再分为两类： 单行函数、聚合函数（或分组函数） 。
 
-### 优先级运算符
+#### 两种SQL函数
 
-![优先级运算符](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230117185303556.png)
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120105036768.png)
 
-### 正则表达式查询
+单行函数
 
-| 指令       | 作用                                   |
-| ---------- | -------------------------------------- |
-| '^b'       | 匹配以字母b开头的字符串                |
-| 'st$'      | 匹配以 st 结尾的字符串                 |
-| 'b.t'      | 匹配任何b和t之间有一个字符的字符串     |
-| 'f*n'      | 匹配字符n前面有任意个字符f 的字符串    |
-| 'ba+'      | 匹配以b开头后面紧跟至少有一个a的字符串 |
-| 'fa'       | 匹配包含fa的字符串                     |
-| '[xz]'     | 匹配包含x或者z的字符串                 |
-| '\[^abc\]' | 匹配任何不包含a- b或c的字符串          |
-| b{2}       | 匹配2个或更多的b                       |
-| b{2,4}     | 匹配含最少2个、最多4个b的字符串        |
++ 操作数据对象
++ 接受参数返回一个结果
++ 只对一行进行变换
++ 每行返回一个结果
++ 可以嵌套
++ 参数可以是一列或一个值
 
-### 排序语法
+## 2. 数值函数
 
-| 指令                                 | 作用                                                         |
-| ------------------------------------ | ------------------------------------------------------------ |
-| ORDER BY hire_date DESC;             | 单列排序，ORDER BY 子句在SELECT语句的结尾<br/>ASC（ascend）: 升序（默认）<br>DESC（descend）:降序 |
-| ORDER BY department_id, salary DESC; | 可以使用不在SELECT列表中的列排序。<br/>若第一列数据中所有值都是唯一的，将不再对第二列进行排序。 |
-
-### 分页语法
-
-| 指令                                     | 作用                                                         |
-| ---------------------------------------- | ------------------------------------------------------------ |
-| LIMIT [位置偏移量,] 行数                 | LIMIT 子句必须放在整个 SELECT 语句的最后！<br/>“位置偏移量” 参数指示MySQL从哪一行开始显示（可选参数），默认从第一条记录偏移量为0<br/>“行数”指示返回的记录条数 |
-| LIMIT 3 OFFSET 4                         | MySQL 8.0新增，从第5条记录开始后面的3条记录，同`LIMIT 4,3;`  |
-| LIMIT (PageNo - 1) * PageSize, PageSize; | 每页参数计算公式，每页的是从第`（当前页数-1）* 每页条数` 条起 |
-
-## 多表查询
-
-| 指令                                                         | 作用                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| SELECT e.last_name,e.salary,j.grade_level<br/>FROM employees e,job_grades j<br/>WHERE e.salary between j.lowest_sal and j.highest_sal; | 等值连接与非等值连接                                         |
-| SELECT CONCAT(worker.last_name ,' works for ', manager.last_name)<br/>FROM employees worker, employees manager<br/>WHERE worker.manager_id = manager.employee_id ; | 自连接与非自连接，构造两张表进行匹配                         |
-| # 左外连接<br/>SELECT last_name,department_name<br/>FROM employees ,departments<br/>WHERE employees.department_id = departments.department_id(+); | SQL92内连接与外连接，(+) 表示哪个是从表                      |
-| SELECT e.last_name, e.department_id, d.department_name<br/>FROM employees e LEFT OUTER JOIN departments d<br/>ON (e.department_id = d.department_id) ; | SQL99内连接与外连接                                          |
-| SELECT column,... FROM table1<br/>UNION [ALL]<br/>SELECT column,... FROM table2 | 合并查询结果。UNION 操作符返回两个查询的结果集的并集，去除重复记录。UNION ALL不去重。 |
-| SELECT employee_id,last_name,department_name<br/>FROM employees e NATURAL JOIN departments d; | 自然连接，自动查询两张连接表中所有相同的字段，然后进行等值连接。 |
-| SELECT employee_id,last_name,department_name<br/>FROM employees e JOIN departments d<br/>USING (department_id); | USING连接。指定数据表里的同名字段进行等值连接。但是只能配合JOIN一起使用。 |
-
-### 7种SQL JOINS的实现
-
-![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230119163005000.png)
-
-中图：内连接 A ∩ B
-
-```sql
-SELECT employee_id,last_name,department_name
-FROM employees e JOIN departments d
-ON e.`department_id` = d.`department_id`;
-```
-
-左上图：左外连接
-
-```sql
-SELECT employee_id,last_name,department_name
-FROM employees e LEFT JOIN departments d
-ON e.`department_id` = d.`department_id`;
-```
-
-右上图：右外连接
-
-```sql
-SELECT employee_id,last_name,department_name
-FROM employees e RIGHT JOIN departments d
-ON e.`department_id` = d.`department_id`;
-```
-
-左中图：A - A ∩ B
-
-```sql
-SELECT employee_id,last_name,department_name
-FROM employees e LEFT JOIN departments d
-ON e.`department_id` = d.`department_id`
-WHERE d.`department_id` IS NULL
-```
-
-右中图：B - A ∩ B
-
-**这里解释一下`WHERE e.department_id IS NULL`，首先是由右外连接衍生出来的，减去中间交集的部分，然后交际的部分是包含A和B的，只需要用条件将 `从表` A置为NULL，即可将在B中有A的部分筛掉。**
-
-```sql
-SELECT employee_id,last_name,department_name
-FROM employees e RIGHT JOIN departments d
-ON e.`department_id` = d.`department_id`
-WHERE e.`department_id` IS NULL
-```
-
-左下图：满外连接，左中图 + 右上图  A∪B
-
-```sql
-SELECT employee_id,last_name,department_name FROM employees e LEFT JOIN departments d
-ON e.`department_id` = d.`department_id` WHERE d.`department_id` IS NULL
-UNION ALL  #没有去重操作，效率高
-SELECT employee_id,last_name,department_name FROM employees e RIGHT JOIN departments d ON e.`department_id` = d.`department_id`;
-```
-
-右下图：左中图 + 右中图 A ∪ B - A ∩ B 或者 ( A - A ∩ B) ∪ ( B - A ∩ B）
-
-```sql
-SELECT employee_id,last_name,department_name
-FROM employees e LEFT JOIN departments d
-ON e.`department_id` = d.`department_id`
-WHERE d.`department_id` IS NULL
-UNION ALL
-SELECT employee_id,last_name,department_name
-FROM employees e RIGHT JOIN departments d
-ON e.`department_id` = d.`department_id`
-WHERE e.`department_id` IS NULL
-```
-
-## 单行函数
-
-### 数值函数
+### 基本函数
 
 | 函数                | 用法                                                         |
 | ------------------- | ------------------------------------------------------------ |
@@ -213,12 +86,45 @@ WHERE e.`department_id` IS NULL
 | TRUNCATE(x,y)       | 返回数字x截断为y位小数的结果                                 |
 | SQRT(x)             | 返回x的平方根。当X的值为负数时，返回NULL                     |
 
+示例：
+
+```sql
+SELECT
+ABS(-123),ABS(32),SIGN(-23),SIGN(43),PI(),CEIL(32.32),CEILING(-43.23),FLOOR(32.32),
+FLOOR(-43.23),MOD(12,5)
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120120332908.png)
+
+```sql
+SELECT RAND(),RAND(),RAND(10),RAND(10),RAND(-1),RAND(-1)
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120120406967.png)
+
+```sql
+SELECT
+ROUND(12.33),ROUND(12.343,2),ROUND(12.324,-1),TRUNCATE(12.66,1),TRUNCATE(12.66,-1)
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120120434927.png)
+
 ### 角度与弧度互换函数
 
 | 函数       | 用法                                  |
 | ---------- | ------------------------------------- |
 | RADIANS(x) | 将角度转化为弧度，其中，参数x为角度值 |
 | DEGREES(x) | 将弧度转化为角度，其中，参数x为弧度值 |
+
+```sql
+SELECT RADIANS(30),RADIANS(60),RADIANS(90),DEGREES(2*PI()),DEGREES(RADIANS(90))
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120120558854.png)
 
 ### 三角函数
 
@@ -233,6 +139,17 @@ WHERE e.`department_id` IS NULL
 | ATAN2(m,n) | 返回两个参数的反正切值                                       |
 | COT(x)     | 返回x的余切值，其中，X为弧度值                               |
 
+ATAN2(M,N)函数返回两个参数的反正切值。 与ATAN(X)函数相比，ATAN2(M,N)需要两个参数，例如有两个点point(x1,y1)和point(x2,y2)，使用ATAN(X)函数计算反正切值为ATAN((y2-y1)/(x2-x1))，使用ATAN2(M,N)计算反正切值则为ATAN2(y2-y1,x2-x1)。由使用方式可以看出，当x2-x1等于0时，ATAN(X)函数会报错，而ATAN2(M,N)函数则仍然可以计算。
+
+```sql
+SELECT
+SIN(RADIANS(30)),DEGREES(ASIN(1)),TAN(RADIANS(45)),DEGREES(ATAN(1)),DEGREES(ATAN2(1,1)
+)
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120120817175.png)
+
 ### 指数与对数
 
 | 函数                 | 用法                                                 |
@@ -243,6 +160,12 @@ WHERE e.`department_id` IS NULL
 | LOG10(X)             | 返回以10为底的X的对数，当X <= 0 时，返回的结果为NULL |
 | LOG2(X)              | 返回以2为底的X的对数，当X <= 0 时，返回NULL          |
 
+```sql
+SELECT POW(2,5),POWER(2,4),EXP(2),LN(10),LOG10(10),LOG2(4)
+```
+
+ ![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120121049013.png)
+
 ### 进制间的转换
 
 | 函数          | 用法                     |
@@ -252,7 +175,15 @@ WHERE e.`department_id` IS NULL
 | OCT(x)        | 返回x的八进制编码        |
 | CONV(x,f1,f2) | 返回f1进制数变成f2进制数 |
 
-### 字符串函数
+示例：
+
+```sql
+SELECT BIN(10),HEX(10),OCT(10),CONV(10,2,8) FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120121639254.png)
+
+## 3. 字符串函数
 
 | 函数                             | 用法                                                         |
 | -------------------------------- | ------------------------------------------------------------ |
@@ -286,6 +217,16 @@ WHERE e.`department_id` IS NULL
 | REVERSE(s)                       | 返回s反转后的字符串                                          |
 | NULLIF(value1,value2)            | 比较两个字符串，如果value1与value2相等，则返回NULL，否则返回value1 |
 
+注意：MySQL中，字符串的位置是从1开始的。
+
+```sql
+SELECT NULLIF('mysql','mysql'),NULLIF('mysql', '');
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120122812136.png)
+
+## 4. 日期和时间函数
+
 ### 获取日期、时间
 
 | 函数                                                         | 函数                           |
@@ -296,6 +237,14 @@ WHERE e.`department_id` IS NULL
 | UTC_DATE()                                                   | 返回UTC（世界标准时间）日期    |
 | UTC_TIME()                                                   | 返回UTC（世界标准时间）时间    |
 
+```sql
+SELECT
+CURDATE(),CURTIME(),NOW(),SYSDATE()+0,UTC_DATE(),UTC_DATE()+0,UTC_TIME(),UTC_TIME()+0
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120123126109.png)
+
 ### 日期与时间戳的转换
 
 | 函数                     | 函数                                                         |
@@ -303,6 +252,26 @@ WHERE e.`department_id` IS NULL
 | UNIX_TIMESTAMP()         | 以UNIX时间戳的形式返回当前时间。SELECT UNIX_TIMESTAMP() - >1634348884 |
 | UNIX_TIMESTAMP(date)     | 将时间date以UNIX时间戳的形式返回。                           |
 | FROM_UNIXTIME(timestamp) | 将UNIX时间戳的时间转换为普通格式的时间                       |
+
+```sql
+SELECT UNIX_TIMESTAMP(now());
+SELECT UNIX_TIMESTAMP(CURDATE());
+SELECT UNIX_TIMESTAMP(CURTIME());
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120123307672.png)
+
+```sql
+SELECT UNIX_TIMESTAMP('2011-11-11 11:11:11')
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120123430432.png)
+
+```sql
+SELECT FROM_UNIXTIME(1320981071)
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120123527389.png)
 
 ### 获取月份、星期、星期数、天数等函数
 
@@ -319,11 +288,38 @@ WHERE e.`department_id` IS NULL
 | DAYOFMONTH(date)                         | 返回日期位于所在月份的第几天                    |
 | DAYOFWEEK(date)                          | 返回周几，注意：周日是1，周一是2，。。。周六是7 |
 
+```sql
+SELECT YEAR(CURDATE()),MONTH(CURDATE()),DAY(CURDATE()),
+HOUR(CURTIME()),MINUTE(NOW()),SECOND(SYSDATE())
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120123841068.png)
+
+```sql
+SELECT MONTHNAME('2021-10-26'),DAYNAME('2021-10-26'),WEEKDAY('2021-10-26'),
+QUARTER(CURDATE()),WEEK(CURDATE()),DAYOFYEAR(NOW()),
+DAYOFMONTH(NOW()),DAYOFWEEK(NOW())
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120123932831.png)
+
 ### 日期的操作函数
 
 | 函数                    | 用法                                       |
 | ----------------------- | ------------------------------------------ |
 | EXTRACT(type FROM date) | 返回指定日期中特定的部分，type指定返回的值 |
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120124108706.png)
+
+```sql
+SELECT EXTRACT(MINUTE FROM NOW()),EXTRACT( WEEK FROM NOW()),
+EXTRACT( QUARTER FROM NOW()),EXTRACT( MINUTE_SECOND FROM NOW())
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120124130206.png)
 
 ### 时间和秒钟转换的函数
 
@@ -339,6 +335,30 @@ WHERE e.`department_id` IS NULL
 | DATE_ADD(datetime, INTERVAL expr type)，ADDDATE(date,INTERVAL expr type) | 返回与给定日期时间相差INTERVAL时间段的日期时间 |
 | DATE_SUB(date,INTERVAL expr type)，SUBDATE(date,INTERVAL expr type) | 返回与date相差INTERVAL时间间隔的日期           |
 
+上述函数中type的取值：
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120124511873.png)
+
+```sql
+SELECT DATE_ADD(NOW(), INTERVAL 1 DAY) AS col1,DATE_ADD('2021-10-21 23:32:12',INTERVAL
+1 SECOND) AS col2,
+ADDDATE('2021-10-21 23:32:12',INTERVAL 1 SECOND) AS col3,
+DATE_ADD('2021-10-21 23:32:12',INTERVAL '1_1' MINUTE_SECOND) AS col4,
+DATE_ADD(NOW(), INTERVAL -1 YEAR) AS col5, #可以是负数
+DATE_ADD(NOW(), INTERVAL '1_1' YEAR_MONTH) AS col6 #需要单引号
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120124559103.png)
+
+```sql
+SELECT DATE_SUB('2021-01-21',INTERVAL 31 DAY) AS col1,
+SUBDATE('2021-01-21',INTERVAL 31 DAY) AS col2,
+DATE_SUB('2021-01-21 02:01:01',INTERVAL '1 1' DAY_HOUR) AS col3
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120124640653.png)
+
 | 函数                         | 用法                                                         |
 | ---------------------------- | ------------------------------------------------------------ |
 | ADDTIME(time1,time2)         | 返回time1加上time2的时间。当time2为一个数字时，代表的是秒，可以为负数 |
@@ -352,6 +372,37 @@ WHERE e.`department_id` IS NULL
 | MAKETIME(hour,minute,second) | 将给定的小时、分钟和秒组合成时间并返回                       |
 | PERIOD_ADD(time,n)           | 返回time加上n后的时间                                        |
 
+```sql
+SELECT
+ADDTIME(NOW(),20),SUBTIME(NOW(),30),SUBTIME(NOW(),'1:1:3'),DATEDIFF(NOW(),'2021-10-
+01'),
+TIMEDIFF(NOW(),'2021-10-25 22:10:10'),FROM_DAYS(366),TO_DAYS('0000-12-25'),
+LAST_DAY(NOW()),MAKEDATE(YEAR(NOW()),12),MAKETIME(10,21,23),PERIOD_ADD(20200101010101,
+10)
+FROM DUAL;
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120125033997.png)
+
+```sql
+SELECT ADDTIME(NOW(), 50); # 2023-01-20 12:57:29
+SELECT ADDTIME(NOW(), '1:1:1'); # 2023-01-20 13:57:50
+SELECT SUBTIME(NOW(), '1:1:1'); # 2023-01-20 11:55:57
+SELECT SUBTIME(NOW(), '-1:-1:-1'); # 2023-01-20 12:57:07
+SELECT FROM_DAYS(366); # 0001-01-01
+SELECT MAKEDATE(2020,1); # 2020-01-01
+SELECT MAKEDATE(2020,32); # 2020-02-01
+SELECT MAKETIME(1,1,1); # 01:01:01
+SELECT PERIOD_ADD(20200101010101,1); # 20200101010102
+SELECT TO_DAYS(NOW()); # 738905
+```
+
+举例：查询 7 天内的新增用户数有多少？
+
+```sql
+SELECT COUNT(*) as num FROM new_user WHERE TO_DAYS(NOW())-TO_DAYS(regist_time)<=7
+```
+
 ### 日期的格式化与解析
 
 | 函数                              | 用法                                       |
@@ -360,6 +411,8 @@ WHERE e.`department_id` IS NULL
 | TIME_FORMAT(time,fmt)             | 按照字符串fmt格式化时间time值              |
 | GET_FORMAT(date_type,format_type) | 返回日期字符串的显示格式                   |
 | STR_TO_DATE(str, fmt)             | 按照字符串fmt对str进行解析，解析为一个日期 |
+
+上述非 `GET_FORMAT` 函数中fmt参数常用的格式符：
 
 | 格式符 | 说明                                                        | 格式符 | 说明                                                        |
 | ------ | ----------------------------------------------------------- | ------ | ----------------------------------------------------------- |
@@ -378,7 +431,26 @@ WHERE e.`department_id` IS NULL
 | %T     | 24小时制                                                    | %r     | 12小时制                                                    |
 | %p     | AM或PM                                                      | %%     | 表示%                                                       |
 
-### 流程控制函数
+GET_FORMAT函数中date_type和format_type参数取值如下：
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120135606961.png)
+
+示例：
+
+```sql
+SELECT DATE_FORMAT(NOW(), '%H:%i:%s'); # 13:56:45
+SELECT STR_TO_DATE('09/01/2009','%m/%d/%Y') FROM DUAL; # 2009-09-01
+SELECT STR_TO_DATE('20140422154706','%Y%m%d%H%i%s') FROM DUAL; # 2014-04-22 15:47:06
+SELECT STR_TO_DATE('2014-04-22 15:47:06','%Y-%m-%d %H:%i:%s') FROM DUAL; # 2014-04-22 15:47:06
+
+SELECT GET_FORMAT(DATE, 'USA'); # %m.%d.%Y
+SELECT DATE_FORMAT(NOW(),GET_FORMAT(DATE,'USA')) FROM DUAL; # 01.20.2023
+SELECT STR_TO_DATE('2020-01-01 00:00:00','%Y-%m-%d'); # 2020-01-01
+```
+
+## 5. 流程控制函数
+
+流程处理函数可以根据不同的条件，执行不同的处理流程，可以在SQL语句中实现不同的条件选择。MySQL中的流程处理函数主要包括IF()、IFNULL()和CASE()函数。
 
 | 函数                                                         | 说明                                            |
 | ------------------------------------------------------------ | ----------------------------------------------- |
@@ -387,7 +459,32 @@ WHERE e.`department_id` IS NULL
 | CASE WHEN 条件1 THEN 结果1 WHEN 条件2 THEN 结果2 .... [ELSE resultn] END | 相当于Java的if...else if...else...              |
 | CASE expr WHEN 常量值1 THEN 值1 WHEN 常量值1 THEN 值1 .... [ELSE 值n] END | 相当于Java的switch...case...                    |
 
-### 加密与解密函数
+示例：
+
+```sql
+SELECT IF(1 > 0,'正确','错误')
+SELECT IFNULL(null,'Hello Word')
+
+# 这里的判断是针对salary这个字段，分类后起别名为details。
+SELECT last_name,salary,CASE WHEN salary >= 15000 THEN 'BGJ' 
+			     WHEN salary >= 10000 THEN 'QLG'
+			     WHEN salary >= 8000 THEN 'XDS'
+			     ELSE 'CG' END "details",department_id
+FROM employees;
+
+/*
+查询部门号为 10,20, 30 的员工信息, 若部门号为 10, 则打印其工资的 1.1 倍, 20 号部门, 则打印其工资的 1.2 倍, 30 号部门,打印其工资的 1.3 倍数,其他部门,打印其工资的 1.4 倍数
+*/
+SELECT employee_id,last_name,department_id,salary,CASE department_id WHEN 10 THEN salary * 1.1
+								     WHEN 20 THEN salary * 1.2
+								     WHEN 30 THEN salary * 1.3
+								     ELSE salary * 1.4 END "details"
+FROM employees;
+```
+
+## 6. 加密与解密函数
+
+加密与解密函数主要用于对数据库中的数据进行加密和解密处理，以防止数据被他人窃取。这些函数在保证数据库安全时非常有用。
 
 | 函数                        | 用法                                                         |
 | --------------------------- | ------------------------------------------------------------ |
@@ -397,7 +494,27 @@ WHERE e.`department_id` IS NULL
 | ENCODE(value,password_seed) | 返回使用password_seed作为加密密码加密value。mysql8.0中弃用。 |
 | DECODE(value,password_seed) | 返回使用password_seed作为加密密码解密value。mysql8.0中弃用。 |
 
-### MySQL信息函数
+可以看到，ENCODE(value,password_seed)函数与DECODE(value,password_seed)函数互为反函数。
+
+```sql
+SELECT md5('123')
+
+SELECT MD5('mysql'),SHA('mysql'),MD5(MD5('mysql'))
+FROM DUAL;
+
+# MySQL 8.0中弃用
+PASSWORD()
+
+SELECT ENCODE('atguigu','mysql'),DECODE(ENCODE('atguigu','mysql'),'mysql')
+FROM DUAL;
+
+```
+
+![](https://raw.githubusercontent.com/timerring/picgo/master/picbed/image-20230120161557432.png)
+
+## 7. MySQL信息函数
+
+MySQL中内置了一些可以查询MySQL信息的函数，这些函数主要用于帮助数据库开发或运维人员更好地对数据库进行维护工作。
 
 | 函数                                                  | 用法                                                      |
 | ----------------------------------------------------- | --------------------------------------------------------- |
@@ -408,7 +525,16 @@ WHERE e.`department_id` IS NULL
 | CHARSET(value)                                        | 返回字符串value自变量的字符集                             |
 | COLLATION(value)                                      | 返回字符串value的比较规则                                 |
 
-### 其他函数
+```sql
+SELECT DATABASE();
+SELECT USER(), CURRENT_USER(), SYSTEM_USER(),SESSION_USER();
+SELECT CHARSET('ABC'); # utf8mb4
+SELECT COLLATION('ABC'); # utf8mb4_0900_ai_ci
+```
+
+## 8. 其他函数
+
+MySQL中有些函数无法对其进行具体的分类，但是这些函数在MySQL的开发和运维过程中也是不容忽视的。
 
 | 函数                           | 用法                                                         |
 | ------------------------------ | ------------------------------------------------------------ |
@@ -419,11 +545,81 @@ WHERE e.`department_id` IS NULL
 | BENCHMARK(n,expr)              | 将表达式expr重复执行n次。用于测试MySQL处理expr表达式所耗费的时间 |
 | CONVERT(value USING char_code) | 将value所使用的字符编码修改为char_code                       |
 
+```sql
+# 如果n的值小于或者等于0，则只保留整数部分
+SELECT FORMAT(123.123, 2), FORMAT(123.523, 0), FORMAT(123.123, -2); # 123.12 124 123
+SELECT CONV(16, 10, 2), CONV(8888,10,16), CONV(NULL, 10, 2); # 10000 22B8 NULL
+SELECT INET_ATON('192.168.1.100'); # 3232235876
+
+# 以“192.168.1.100”为例，计算方式为192乘以256的3次方，加上168乘以256的2次方，加上1乘以256，再加上
+100。
+SELECT INET_NTOA(3232235876); # 192.168.1.100
+SELECT BENCHMARK(1, MD5('mysql')); # 0
+SELECT BENCHMARK(1000000, MD5('mysql')); # 查询时间: 0.135s
+SELECT CHARSET('mysql'), CHARSET(CONVERT('mysql' USING 'utf8'));
+```
+
+## 练习题
+
+1.显示系统时间 (注：日期+时间)
+
+```sql
+SELECT NOW() FROM DUAL;
+```
+
+2.查询员工号，姓名，工资，以及工资提高百分之20%后的结果（new salary）
+
+```sql
+SELECT employee_id, last_name, salary, salary * 1.2 "new salary" 
+FROM employees
+```
+
+3.将员工的姓名按首字母排序，并写出姓名的长度（length）
+
+```sql
+SELECT last_name, LENGTH(last_name)
+FROM employees
+ORDER BY last_name DESC;
+```
+
+4.查询员工 id, last_name, salary，并作为一个列输出，别名为OUT_PUT
+
+```sql
+SELECT CONCAT(employee_id, ',', last_name, ',' , salary) OUT_PUT
+FROM employees
+```
+
+5.查询公司各员工工作的年数、工作的天数，并按工作年数的降序排序。
+
+```sql
+SELECT DATEDIFF(SYSDATE(),hire_date)/365 worked_years, DATEDIFF(SYSDATE(),hire_date) worked_days
+FROM employees
+ORDER BY worked_years DESC;
+```
+
+6.查询员工姓名，hire_date , department_id，满足以下条件：雇用时间在1997年之后，department_id 为80 或 90 或110, commission_pct不为空
+
+```sql
+SELECT last_name, hire_date, department_id
+FROM employees
+#WHERE hire_date >= '1997-01-01'
+#WHERE hire_date >= STR_TO_DATE('1997-01-01', '%Y-%m-%d')
+WHERE DATE_FORMAT(hire_date,'%Y') >= '1997'
+AND department_id IN (80, 90, 110)
+AND commission_pct IS NOT NULL
+```
+
+7.查询公司中入职超过10000天的员工姓名、入职时间
+
+```sql
+SELECT last_name,hire_date
+FROM employees
+#WHERE TO_DAYS(NOW()) - to_days(hire_date) > 10000;
+WHERE DATEDIFF(NOW(),hire_date) > 10000;
+```
 
 
-## MySQL指令
 
-| 指令                                             | 作用                             |
-| ------------------------------------------------ | -------------------------------- |
-| source d:\xxxx.sql                               | 使用source指令绝对路径导入数据库 |
-| DESCRIBE employees;<br/># 或<br/>DESC employees; | 显示表结构                       |
+
+
+[返回首页](https://github.com/timerring/learn-MySQL)
